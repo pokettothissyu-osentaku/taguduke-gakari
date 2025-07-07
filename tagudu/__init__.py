@@ -1,4 +1,4 @@
 from .tagudu import main
-from .folder import Folder
+from .tagged_directory import TaggedDirectory
 
-__all__ = ["main", "Folder"]
+__all__ = ["main", "TaggedDirectory"]
