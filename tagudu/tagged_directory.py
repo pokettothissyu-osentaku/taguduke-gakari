@@ -224,6 +224,37 @@ class TaggedDirectory(object):
 
         return result
 
+    def filter_by_partial_tags(
+        self, tags: list[str], *, file_operation: bool = True
+    ) -> list[str]:
+        """部分一致のタグによりファイルを絞り込み
+
+        Args:
+            tags (list[str]): タグのリスト
+            file_operation (bool): 絞り込み結果を結果ディレクトリに反映させるか。初期値は「True」
+
+        Returns:
+            list[str]: 絞り込み結果
+
+        """
+
+        def func(filename):
+            file_tags = self.data[filename]
+            for file_tag in file_tags:
+                for tag in tags:
+                    if tag in file_tag:
+                        return True
+            return False
+
+        result = list(filter(func, self.data))
+
+        # ファイル操作
+        if file_operation:
+            self.reset_directory_structure()
+            self._apply_filter_result(result)
+
+        return result
+
     def reset_directory_structure(self):
         """ディレクトリ内のファイルの配置をリセットする"""
 

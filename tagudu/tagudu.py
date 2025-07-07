@@ -16,6 +16,7 @@ def main():
             "filter": filter_,
             "filter_and": filter_and,
             "filter_re": filter_re,
+            "filter_partial": filter_partial,
             "reset": reset,
         }
     )
@@ -111,6 +112,19 @@ def filter_re(pattern: str):
 
     tagged_directory = TaggedDirectory("./")
     for filename in tagged_directory.filter_by_regular_expression(pattern):
+        print(filename)
+
+
+def filter_partial(*tags: str):
+    """ファイルを絞り込む。指定されたタグのいずれかが部分一致するファイルを対象とする
+
+    Args:
+        tags (str): タグのリスト
+    
+    """
+
+    tagged_directory = TaggedDirectory("./")
+    for filename in tagged_directory.filter_by_partial_tags(list(tags)):
         print(filename)
 
 
