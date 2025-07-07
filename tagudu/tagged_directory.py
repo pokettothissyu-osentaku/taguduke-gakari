@@ -117,8 +117,11 @@ class TaggedDirectory(object):
         else:
             return []
 
-    def count_tags(self) -> dict[str, int]:
+    def count_tags(self, search_word: str = "") -> dict[str, int]:
         """タグ数を集計
+
+        Args:
+            search_word (str, optional): 検索ワード
 
         Returns:
             dict[str, int]: 集計結果
@@ -127,13 +130,26 @@ class TaggedDirectory(object):
 
         result = {}
 
+        # 集計
         for tag_list in self.data.values():
             for tag in tag_list:
                 if tag not in result:
                     result[tag] = 0
                 result[tag] += 1
 
-        return result
+        sorted_result = {}
+
+        # ソート
+        for tag in sorted(result, key=lambda tag: result[tag], reverse=True):
+            sorted_result[tag] = result[tag]
+
+        search_result = {}
+
+        # 検索
+        for tag in filter(lambda tag: search_word in tag, sorted_result):
+            search_result[tag] = sorted_result[tag]
+
+        return search_result
 
     # フィルター関係
 

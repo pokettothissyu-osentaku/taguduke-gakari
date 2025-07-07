@@ -62,11 +62,16 @@ def tags(filename: str):
         print(tag)
 
 
-def counts():
-    """タグ数の集計を表示"""
+def counts(search_word: str = ""):
+    """タグ数の集計を表示
+    
+    Args:
+        search_word (str, optional): 検索ワード
+
+    """
 
     tagged_directory = TaggedDirectory("./")
-    for tag, num in tagged_directory.count_tags().items():
+    for tag, num in tagged_directory.count_tags(search_word).items():
         print(f"{tag}: {num}")
 
 
