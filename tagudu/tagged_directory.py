@@ -60,6 +60,10 @@ class TaggedDirectory(object):
 
         """
 
+        # tagsが空のリストの場合は何もしない
+        if len(tags) == 0:
+            return
+
         # 未登録のファイル名の場合
         if filename not in self.data:
             self.data[filename] = []
@@ -93,6 +97,25 @@ class TaggedDirectory(object):
         if len(file_tags) == 0:
             del self.data[filename]
 
+    def remove_all_tags(self, filename: str):
+        """ファイルからすべてのタグを解除
+
+        Args:
+            filename (str): ファイル名
+
+        """
+
+        if filename in self.data:
+            del self.data[filename]
+
+    def autoremove(self):
+        """タグが付けられているが実在しないファイルを削除"""
+
+        nonexisting_file_list = self.get_nonexisting_file_list()
+
+        for filename in nonexisting_file_list:
+            self.remove_all_tags(filename)
+
     def save_json(self):
         """jsonファイルにデータを書き込む"""
 
@@ -116,6 +139,65 @@ class TaggedDirectory(object):
             return self.data[filename]
         else:
             return []
+
+    def get_file_list(self) -> list[str]:
+        """タグがつけられているファイルのリストを取得
+
+        Returns:
+            list[str]: ファイルのリスト
+
+        """
+
+        return list(self.data.keys())
+
+    def get_existing_file_list(self) -> list[str]:
+        """タグ付け可能な実在するファイルのリストを取得
+
+        Returns:
+            list[str]: ファイルのリスト
+
+        """
+
+        file_list = [
+            filename
+            for filename in os.listdir(self.path)
+            if (self.path / filename).is_file()
+        ]
+
+        if self.result_path.is_dir():
+            file_list += [
+                filename
+                for filename in os.listdir(self.result_path)
+                if (self.result_path / filename).is_file()
+            ]
+
+        return file_list
+
+    def get_nonexisting_file_list(self) -> list[str]:
+        """タグが付けられているが実在しないファイルのリストを取得
+
+        Returns:
+            list[str]: ファイルのリスト
+
+        """
+
+        file_list = self.get_file_list()
+        existing_file_list = self.get_existing_file_list()
+
+        return list(set(file_list) - set(existing_file_list))
+
+    def get_unregistered_file_list(self) -> list[str]:
+        """タグがつけられていないファイルのリストを取得
+
+        Returns:
+            list[str]: ファイルのリスト
+
+        """
+
+        file_list = self.get_file_list()
+        existing_file_list = self.get_existing_file_list()
+
+        return list(set(existing_file_list) - set(file_list))
 
     def count_tags(self, search_word: str = "") -> dict[str, int]:
         """タグ数を集計

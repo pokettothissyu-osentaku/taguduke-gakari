@@ -11,7 +11,13 @@ def main():
         {
             "set": set,
             "remove": remove,
+            "remove_all": remove_all,
+            "autoremove": autoremove,
             "tags": tags,
+            "list": list_,
+            "existing_list": existing_list,
+            "nonexisting_list": nonexisting_list,
+            "unregistered_list": unregistered_list,
             "counts": counts,
             "filter": filter_,
             "filter_and": filter_and,
@@ -50,6 +56,27 @@ def remove(filename: str, *tags: str):
     tagged_directory.save_json()
 
 
+def remove_all(filename: str):
+    """ファイルからすべてのタグを解除
+    
+    Args:
+        filename (str): ファイル名
+
+    """
+
+    tagged_directory = TaggedDirectory("./")
+    tagged_directory.remove_all_tags(filename)
+    tagged_directory.save_json()
+
+
+def autoremove():
+    """タグが付けられているが実在しないファイルを削除"""
+
+    tagged_directory = TaggedDirectory("./")
+    tagged_directory.autoremove()
+    tagged_directory.save_json()
+
+
 def tags(filename: str):
     """ファイルに設定されているタグのリストを表示
 
@@ -61,6 +88,38 @@ def tags(filename: str):
     tagged_directory = TaggedDirectory("./")
     for tag in tagged_directory.get_tag_list(filename):
         print(tag)
+
+
+def list_():
+    """タグがつけられているファイルのリストを表示"""
+
+    tagged_directory = TaggedDirectory("./")
+    for filename in tagged_directory.get_file_list():
+        print(filename)
+
+
+def existing_list():
+    """タグ付け可能な実在するファイルのリストを表示"""
+
+    tagged_directory = TaggedDirectory("./")
+    for filename in tagged_directory.get_existing_file_list():
+        print(filename)
+
+
+def nonexisting_list():
+    """タグが付けられているが実在しないファイルのリストを表示"""
+
+    tagged_directory = TaggedDirectory("./")
+    for filename in tagged_directory.get_nonexisting_file_list():
+        print(filename)
+
+
+def unregistered_list():
+    """タグがつけられていないファイルのリストを表示"""
+
+    tagged_directory = TaggedDirectory("./")
+    for filename in tagged_directory.get_unregistered_file_list():
+        print(filename)
 
 
 def counts(search_word: str = ""):
